@@ -10,10 +10,10 @@ services:
             - '.:/application'
         environment:
             - MYSQL_ROOT_PASSWORD=root
-            - MYSQL_DATABASE=convicti_api
+            - MYSQL_DATABASE=api_convicti
             - MYSQL_PASSWORD=root
         ports:
-            - '3306:3306'
+            - '8082:3306'
 
     clickhouse:
         image: 'yandex/clickhouse-server:latest'
@@ -32,4 +32,4 @@ services:
         working_dir: /application
         volumes:
             - '.:/application'
-            - './docker/php-fpm/php-ini-overrides.ini:/etc/php/8.0/fpm/conf.d/99-overrides.ini'
+            - './docker/php-fpm/php-ini-overrides.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini'
