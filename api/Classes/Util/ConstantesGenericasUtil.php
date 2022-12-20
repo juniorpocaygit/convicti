@@ -6,8 +6,8 @@ abstract class ConstantesGenericasUtil
 {
     /* REQUESTS */
     public const TIPO_REQUEST = ['GET', 'POST', 'DELETE', 'PUT'];
-    public const TIPO_GET = ['USUARIOS'];
-    public const TIPO_POST = ['USUARIOS'];
+    public const TIPO_GET = ['USUARIOS','VENDAS'];
+    public const TIPO_POST = ['USUARIOS','VENDAS'];
     public const TIPO_DELETE = ['USUARIOS'];
     public const TIPO_PUT = ['USUARIOS'];
 
@@ -33,6 +33,12 @@ abstract class ConstantesGenericasUtil
     public const MSG_ERRO_LOGIN_SENHA_OBRIGATORIO = 'Login e Senha são obrigatórios!';
     public const MSG_ERRO_LOGIN_JA_EXISTENTE = 'Esse usuário já existe!';
     public const MSG_ERRO_LOGIN_GERAL = 'Houve um problema ao fazer o cadastro deste usuário.';
+
+    /* RECURSO VENDAS*/
+    public const MSG_ERRO_VENDA = 'Sua venda não pode ser inserida no sistema.';
+    public const MSG_ERRO_VENDA_DETALHE = 'Venda não encontrada.';
+    public const MSG_ERRO_VENDA_GERAL = 'Ocorreu um erro ao inserir sua venda no sistema, tente novamente mais tarde.';
+    public const MSG_ERRO_VENDA_CARGO = 'Esse usuário não possui nenhuma venda realizada';
 
     /* RETORNO JSON */
     const TIPO_SUCESSO = 'sucesso';

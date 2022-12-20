@@ -6,6 +6,7 @@ use Util\ConstantesGenericasUtil;
 use Util\JsonUtil;
 use Repository\TokensAutorizadosRepository;
 use Service\UsuariosService;
+use Service\VendasService;
 
 class RequestValidator
 {
@@ -16,11 +17,10 @@ class RequestValidator
     const GET = 'GET';
     const DELETE = 'DELETE';
     const USUARIOS = 'USUARIOS';
-  
-    
+    const VENDAS = 'VENDAS';
+      
     public function __construct($request)
     {
-
        $this->request = $request;
        $this->tokensAutorizadosRepository = new TokensAutorizadosRepository();
     }
@@ -61,6 +61,10 @@ class RequestValidator
                     $UsuariosService = new UsuariosService($this->request);
                     $retorno = $UsuariosService->validarGet();
                     break;
+                case self::VENDAS:
+                    $VendasService = new VendasService($this->request);
+                    $retorno = $VendasService->validarGet();
+                    break;
                 default:
                     throw new \InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);
             }
@@ -86,6 +90,7 @@ class RequestValidator
 
     private function post()
     {
+        
         $retorno = utf8_encode(ConstantesGenericasUtil::MSG_ERRO_TIPO_ROTA);
         if (in_array($this->request['rota'], ConstantesGenericasUtil::TIPO_POST)) {
             switch($this->request['rota']){
@@ -93,6 +98,11 @@ class RequestValidator
                     $UsuariosService = new UsuariosService($this->request);
                     $UsuariosService->setDadosCorpoRequest($this->dadosRequest);
                     $retorno = $UsuariosService->validarPost();
+                    break;
+                case self::VENDAS:
+                    $VendasService = new VendasService($this->request);
+                    $VendasService->setDadosCorpoRequest($this->dadosRequest);
+                    $retorno = $VendasService->validarPost();
                     break;
                 default:
                     throw new \InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);

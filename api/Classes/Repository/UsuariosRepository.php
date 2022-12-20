@@ -47,7 +47,10 @@ class UsuariosRepository
         if (!password_verify($senha, $output['senha'] )) {
             return;        
         } else {
-            return "ID: ". $output['id'];
+            $resp = array(
+                "id" => $output['id']
+            );
+            return $resp;
         }
     }
 

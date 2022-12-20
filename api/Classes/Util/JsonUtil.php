@@ -12,7 +12,7 @@ class JsonUtil
         $dados = [];
         $dados[ConstantesGenericasUtil::TIPO] = ConstantesGenericasUtil::TIPO_ERRO;
           
-        if ((is_array($retorno) && count($retorno) > 0) || strlen($retorno) > 1) {
+        if ((is_array($retorno) && count($retorno) > 0) || strlen($retorno) > 10) {
            $dados[ConstantesGenericasUtil::TIPO] = ConstantesGenericasUtil::TIPO_SUCESSO;
            $dados[ConstantesGenericasUtil::RESPOSTA] = $retorno; 
         }
