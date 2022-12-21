@@ -88,20 +88,18 @@ class VendasService
    
     private function inserir()
     {
-       [$cliente, $produto, $valor, $vendedor, $lat, $lon, $unid_prox, $roaming] = 
+       [$cliente, $produto, $valor, $vendedor, $lat, $lon] = 
         [
             $this->dadosCorpoRequest['cliente'], 
             $this->dadosCorpoRequest['produto'], 
             $this->dadosCorpoRequest['valor'], 
             $this->dadosCorpoRequest['vendedor'], 
             $this->dadosCorpoRequest['lat'], 
-            $this->dadosCorpoRequest['lon'],
-            $this->dadosCorpoRequest['unid_prox'], 
-            $this->dadosCorpoRequest['roaming']
+            $this->dadosCorpoRequest['lon']
         ];
         if ($cliente && $produto && $valor && $vendedor) {
             try {
-                $this->VendasRepository->insertVenda($cliente, $produto, $valor, $vendedor, $lat, $lon, $unid_prox, $roaming); 
+                $this->VendasRepository->insertVenda($cliente, $produto, $valor, $vendedor, $lat, $lon); 
                 $idInserido = $this->VendasRepository->getMySQL()->getDb()->lastInsertId();
                 $this->VendasRepository->getMySQL()->getDb()->commit();
                 return ['id_inserido' => $idInserido];

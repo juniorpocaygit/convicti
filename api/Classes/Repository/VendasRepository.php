@@ -33,8 +33,9 @@ class VendasRepository
         return $d;
     }
 
-    public function insertVenda($cliente, $produto, $valor, $vendedor, $lat, $lon, $unid_prox, $roaming)
+    public function insertVenda($cliente, $produto, $valor, $vendedor, $lat, $lon)
     {
+        //Seleciona todas as unidades para fazer a aferição da distância entre elas e a coordenada da venda
         $consultaCoordenadas = 'SELECT * FROM unidade'; 
         $this->MySQL->getDb()->beginTransaction();
         $stmt = $this->MySQL->getDb()->prepare($consultaCoordenadas);
@@ -42,38 +43,36 @@ class VendasRepository
         $output = $stmt->fetchAll($this->MySQL->getDb()::FETCH_ASSOC);
         $this->MySQL->getDb()->commit();
 
+        //Verifica a menor distância entre uma venda e retorna a unidade mais próxima
         $count = count($output);
         $distancia = [];
         for ($i=0; $i < $count ; $i++) { 
            $distancia[$output[$i]['unidade']] = $this->getDistance($output[$i]['lat'], $output[$i]['lon'], $lat, $lon);
+        }    
+        $distMin = min($distancia);
+        //Especifica qua a unidade mais próxima da venda
+        $unidade = array_search($distMin, $distancia);
+
+        //Seleciona a unidade do vendedor e caso a distancia seja mais próxima d eoutra unidade cria a venda em roaming
+        $consultaCoordenadas = 'SELECT uni.unidade FROM usuarios as usu
+        JOIN unidade as uni ON uni.id = usu.unidade WHERE usu.id = :vendedor'; 
+        $this->MySQL->getDb()->beginTransaction();
+        $stmt = $this->MySQL->getDb()->prepare($consultaCoordenadas);
+        $stmt->bindParam(':vendedor', $vendedor);
+        $stmt->execute();
+        $outputVendedor = $stmt->fetchAll($this->MySQL->getDb()::FETCH_ASSOC);
+        $this->MySQL->getDb()->commit();
+
+        //Compara a unidade do vendedor e a unidade mais próxima da venda, caso sejam diferentes criam a venda em roaming
+        if ($unidade != $outputVendedor) {
+           $roaming = "S";
+        } else {
+            $roaming = "N";
         }
-        var_dump($distancia);
-        return;
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+       
         $data = date('Y-m-d H:i:s', time());
 
-
-
-        
-        $consultaInsert = 'INSERT INTO '. self::TABELA .'(data, cliente, produto, valor, vendedor, lat, lon, unid_prox, roaming) VALUES (:data, :cliente, :produto, :valor, :vendedor, :lat, :lon, :unid_prox, :roaming)';
+        $consultaInsert = 'INSERT INTO '. self::TABELA .'(data, cliente, produto, valor, vendedor, lat, lon, unid_vend, roaming) VALUES (:data, :cliente, :produto, :valor, :vendedor, :lat, :lon, :unid_vend, :roaming)';
         $this->MySQL->getDb()->beginTransaction();
         $stmt = $this->MySQL->getDb()->prepare($consultaInsert);
         $stmt->bindParam(':data', $data);
@@ -83,7 +82,7 @@ class VendasRepository
         $stmt->bindParam(':vendedor', $vendedor);
         $stmt->bindParam(':lat', $lat);
         $stmt->bindParam(':lon', $lon);
-        $stmt->bindParam(':unid_prox', $unid_prox);
+        $stmt->bindParam(':unid_vend', $outputVendedor );
         $stmt->bindParam(':roaming', $roaming);
         $stmt->execute();
            
@@ -96,7 +95,7 @@ class VendasRepository
         cliente, produto, valor, nome as vendedor, uniuser.unidade, regiao.regiao, uniprox.unidade as unid_prox, roaming, ven.id FROM '. self::TABELA .' as ven 
         JOIN usuarios as user ON ven.vendedor = user.id
         JOIN unidade as uniuser ON user.unidade = uniuser.id 
-        JOIN unidade as uniprox ON ven.unid_prox = uniprox.id 
+        JOIN unidade as univend ON ven.unid_vend = univend.id 
         JOIN regiao ON uniuser.regiao = regiao.id
         WHERE ven.id = :venda '; 
         $this->MySQL->getDb()->beginTransaction();
@@ -137,15 +136,15 @@ class VendasRepository
             $varWhere = 'WHERE ven.vendedor ='.$id;
         }
 
-        $consultaUpdate = 'SELECT  DATE_FORMAT(`data`, "%d/%m/%Y às %H:%i") AS `data`,
-        cliente, produto, valor, nome as vendedor, uniuser.unidade, regiao.regiao, uniprox.unidade as unid_prox, roaming, ven.id FROM '. self::TABELA .' as ven 
+        $consultaPorCargo = 'SELECT  DATE_FORMAT(`data`, "%d/%m/%Y às %H:%i") AS `data`,
+        cliente, produto, valor, nome as vendedor, uniuser.unidade, regiao.regiao, univend.unidade as unid_vend, roaming, ven.id FROM '. self::TABELA .' as ven 
         JOIN usuarios as user ON ven.vendedor = user.id
         JOIN unidade as uniuser ON user.unidade = uniuser.id 
-        JOIN unidade as uniprox ON ven.unid_prox = uniprox.id 
+        JOIN unidade as univend ON ven.unid_vend = univend.id 
         JOIN regiao ON uniuser.regiao = regiao.id '. $varWhere .'
         ORDER BY data DESC'; 
         $this->MySQL->getDb()->beginTransaction();
-        $stmt = $this->MySQL->getDb()->prepare($consultaUpdate);
+        $stmt = $this->MySQL->getDb()->prepare($consultaPorCargo);
         $stmt->execute();
         $output =  $stmt->fetchAll($this->MySQL->getDb()::FETCH_ASSOC);
         $this->MySQL->getDb()->commit();
@@ -205,15 +204,15 @@ class VendasRepository
         
         $varWhere = $varWhere .' AND '. $filterWhere;
 
-        $consultaUpdate = 'SELECT  DATE_FORMAT(`data`, "%d/%m/%Y às %H:%i") AS `data`,
-        cliente, produto, valor, nome as vendedor, uniuser.unidade, regiao.regiao, uniprox.unidade as unid_prox, roaming, ven.id FROM '. self::TABELA .' as ven 
+        $consultaPorCargo = 'SELECT  DATE_FORMAT(`data`, "%d/%m/%Y às %H:%i") AS `data`,
+        cliente, produto, valor, nome as vendedor, uniuser.unidade, regiao.regiao, univend.unidade as unid_vend, roaming, ven.id FROM '. self::TABELA .' as ven 
         JOIN usuarios as user ON ven.vendedor = user.id
         JOIN unidade as uniuser ON user.unidade = uniuser.id 
-        JOIN unidade as uniprox ON ven.unid_prox = uniprox.id 
-        JOIN regiao ON uniuser.regiao = regiao.id '. $varWhere .' 
+        JOIN unidade as univend ON ven.unid_vend = univend.id 
+        JOIN regiao ON uniuser.regiao = regiao.id '. $varWhere .'
         ORDER BY data DESC'; 
         $this->MySQL->getDb()->beginTransaction();
-        $stmt = $this->MySQL->getDb()->prepare($consultaUpdate);
+        $stmt = $this->MySQL->getDb()->prepare($consultaPorCargo);
         $stmt->execute();
         $output =  $stmt->fetchAll($this->MySQL->getDb()::FETCH_ASSOC);
         $this->MySQL->getDb()->commit();
