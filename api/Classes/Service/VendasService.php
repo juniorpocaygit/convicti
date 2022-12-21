@@ -10,7 +10,7 @@ class VendasService
     public const TABELA = 'vendas';
     public const RECURSOS_GET = ['relatorio'];
     public const RECURSOS_DELETE = ['deletar'];
-    public const RECURSOS_POST = ['inserir', 'detalhes'];
+    public const RECURSOS_POST = ['inserir', 'detalhes','filtrar'];
     public const RECURSOS_PUT = ['atualizar'];
 
     private array $dados;
@@ -114,7 +114,7 @@ class VendasService
 
     private function login()
     {
-       [$email, $senha] = 
+       [$filter] = 
        [
             $this->dadosCorpoRequest['email'],
             $this->dadosCorpoRequest['senha']
@@ -159,10 +159,27 @@ class VendasService
         }   
         throw new \InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_VENDA_CARGO);
     }
+   
+    private function filtrar()
+    {
+       [$dtInicio, $dtFim, $vendedor, $unidade, $regiao] = 
+       [
+            $this->dadosCorpoRequest['dtInicio'] ? $this->dadosCorpoRequest['dtInicio'] : 0,
+            $this->dadosCorpoRequest['dtFim'] ? $this->dadosCorpoRequest['dtFim'] : 0,
+            $this->dadosCorpoRequest['vendedor'] ? $this->dadosCorpoRequest['vendedor'] : 0,
+            $this->dadosCorpoRequest['unidade'] ? $this->dadosCorpoRequest['unidade'] : 0,
+            $this->dadosCorpoRequest['regiao'] ? $this->dadosCorpoRequest['regiao'] : 0
+       ];
+            if ($this->VendasRepository->filtrarRelatorio($this->dados['id'], $dtInicio, $dtFim, $vendedor, $unidade, $regiao)) {
+                $retorno = $this->VendasRepository->getMySQL()->getDb();
+                return $this->VendasRepository->filtrarRelatorio($this->dados['id'], $dtInicio, $dtFim, $vendedor, $unidade, $regiao);
+            }   
+            throw new \InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_VENDA_FILTRO);
+    }
     
     private function detalhes()
     {
-        [$venda] = 
+       [$venda] = 
        [
             $this->dadosCorpoRequest['venda']
        ];
