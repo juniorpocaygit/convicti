@@ -20,9 +20,58 @@ class VendasRepository
         $this->MySQL = new MySQL();
     }
 
+    function getDistance($latitude1, $longitude1, $latitude2, $longitude2) {
+        $earth_radius = 6371;
+
+        $dLat = deg2rad($latitude2 - $latitude1);
+        $dLon = deg2rad($longitude2 - $longitude1);
+
+        $a = sin($dLat/2) * sin($dLat/2) + cos(deg2rad($latitude1)) * cos(deg2rad($latitude2)) * sin($dLon/2) * sin($dLon/2);
+        $c = 2 * asin(sqrt($a));
+        $d = $earth_radius * $c;
+
+        return $d;
+    }
+
     public function insertVenda($cliente, $produto, $valor, $vendedor, $lat, $lon, $unid_prox, $roaming)
     {
+        $consultaCoordenadas = 'SELECT * FROM unidade'; 
+        $this->MySQL->getDb()->beginTransaction();
+        $stmt = $this->MySQL->getDb()->prepare($consultaCoordenadas);
+        $stmt->execute();
+        $output = $stmt->fetchAll($this->MySQL->getDb()::FETCH_ASSOC);
+        $this->MySQL->getDb()->commit();
+
+        $count = count($output);
+        $distancia = [];
+        for ($i=0; $i < $count ; $i++) { 
+           $distancia[$output[$i]['unidade']] = $this->getDistance($output[$i]['lat'], $output[$i]['lon'], $lat, $lon);
+        }
+        var_dump($distancia);
+        return;
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         $data = date('Y-m-d H:i:s', time());
+
+
+
         
         $consultaInsert = 'INSERT INTO '. self::TABELA .'(data, cliente, produto, valor, vendedor, lat, lon, unid_prox, roaming) VALUES (:data, :cliente, :produto, :valor, :vendedor, :lat, :lon, :unid_prox, :roaming)';
         $this->MySQL->getDb()->beginTransaction();
