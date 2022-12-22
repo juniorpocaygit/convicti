@@ -1,0 +1,259 @@
+{
+	"info": {
+		"_postman_id": "e607c3a0-1417-4e3d-a705-4fa924d5d894",
+		"name": "CONVICTI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21243570"
+	},
+	"item": [
+		{
+			"name": "usuarios",
+			"item": [
+				{
+					"name": "Lista todos os usuários",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/usuarios/listar",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"listar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Adiciona novo usuário",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cargo\":4,\r\n    \"unidade\":7,\r\n    \"regiao\":2,\r\n    \"nome\":\"Leonel Messi\",\r\n    \"email\":\"leonel@magazineaziul.com.br\",\r\n    \"senha\":\"123mudar\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/usuarios/cadastrar",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"cadastrar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"andre@magazineaziul.com.br\",\r\n    \"senha\":\"123mudar\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/usuarios/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "vendas",
+			"item": [
+				{
+					"name": "Insere nova venda",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cliente\":\"Jack Barbosa\",\r\n    \"produto\":\"Jogo de Panelas\",\r\n    \"valor\":632.89,\r\n    \"vendedor\":32,\r\n    \"lat\":\"-16.673126240814387\",\r\n    \"lon\":\"-49.25248826354209\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/vendas/inserir/",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"vendas",
+								"inserir",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lista todas as vendas por cargo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/vendas/relatorio/7",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"vendas",
+								"relatorio",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lista todas as vendas por unidade",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/vendas/relatorio/",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"vendas",
+								"relatorio",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filtrar Relatórios",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n      \"vendedor\":40\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/vendas/filtrar/6",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"vendas",
+								"filtrar",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Detalhes da Venda",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"venda\":29\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/vendas/detalhes/",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"vendas",
+								"detalhes",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "8ec6fdd6-8e4e-4558-b0be-692801a34e9e",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "URL",
+			"value": "localhost:8080",
+			"type": "string"
+		}
+	]
+}
