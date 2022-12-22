@@ -72,7 +72,7 @@ class VendasRepository
        
         $data = date('Y-m-d H:i:s', time());
 
-        $consultaInsert = 'INSERT INTO '. self::TABELA .'(data, cliente, produto, valor, vendedor, lat, lon, unid_vend, roaming) VALUES (:data, :cliente, :produto, :valor, :vendedor, :lat, :lon, :unid_vend, :roaming)';
+        $consultaInsert = 'INSERT INTO '. self::TABELA .'(data, cliente, produto, valor, vendedor, lat, lon, unid_prox, roaming) VALUES (:data, :cliente, :produto, :valor, :vendedor, :lat, :lon, :unid_prox, :roaming)';
         $this->MySQL->getDb()->beginTransaction();
         $stmt = $this->MySQL->getDb()->prepare($consultaInsert);
         $stmt->bindParam(':data', $data);
@@ -82,7 +82,7 @@ class VendasRepository
         $stmt->bindParam(':vendedor', $vendedor);
         $stmt->bindParam(':lat', $lat);
         $stmt->bindParam(':lon', $lon);
-        $stmt->bindParam(':unid_vend', $outputVendedor );
+        $stmt->bindParam(':unid_prox', $outputVendedor );
         $stmt->bindParam(':roaming', $roaming);
         $stmt->execute();
            
@@ -95,7 +95,7 @@ class VendasRepository
         cliente, produto, valor, nome as vendedor, uniuser.unidade, regiao.regiao, uniprox.unidade as unid_prox, roaming, ven.id FROM '. self::TABELA .' as ven 
         JOIN usuarios as user ON ven.vendedor = user.id
         JOIN unidade as uniuser ON user.unidade = uniuser.id 
-        JOIN unidade as univend ON ven.unid_vend = univend.id 
+        JOIN unidade as uniprox ON ven.unid_prox = uniprox.id 
         JOIN regiao ON uniuser.regiao = regiao.id
         WHERE ven.id = :venda '; 
         $this->MySQL->getDb()->beginTransaction();
@@ -137,10 +137,10 @@ class VendasRepository
         }
 
         $consultaPorCargo = 'SELECT  DATE_FORMAT(`data`, "%d/%m/%Y às %H:%i") AS `data`,
-        cliente, produto, valor, nome as vendedor, uniuser.unidade, regiao.regiao, univend.unidade as unid_vend, roaming, ven.id FROM '. self::TABELA .' as ven 
+        cliente, produto, valor, nome as vendedor, uniuser.unidade, regiao.regiao, univend.unidade as unid_prox, roaming, ven.id FROM '. self::TABELA .' as ven 
         JOIN usuarios as user ON ven.vendedor = user.id
         JOIN unidade as uniuser ON user.unidade = uniuser.id 
-        JOIN unidade as univend ON ven.unid_vend = univend.id 
+        JOIN unidade as uniprox ON ven.unid_prox = uniprox.id 
         JOIN regiao ON uniuser.regiao = regiao.id '. $varWhere .'
         ORDER BY data DESC'; 
         $this->MySQL->getDb()->beginTransaction();
@@ -205,10 +205,10 @@ class VendasRepository
         $varWhere = $varWhere .' AND '. $filterWhere;
 
         $consultaPorCargo = 'SELECT  DATE_FORMAT(`data`, "%d/%m/%Y às %H:%i") AS `data`,
-        cliente, produto, valor, nome as vendedor, uniuser.unidade, regiao.regiao, univend.unidade as unid_vend, roaming, ven.id FROM '. self::TABELA .' as ven 
+        cliente, produto, valor, nome as vendedor, uniuser.unidade, regiao.regiao, uniprox.unidade as unid_vend, roaming, ven.id FROM '. self::TABELA .' as ven 
         JOIN usuarios as user ON ven.vendedor = user.id
         JOIN unidade as uniuser ON user.unidade = uniuser.id 
-        JOIN unidade as univend ON ven.unid_vend = univend.id 
+        JOIN unidade as uniprox ON ven.unid_prox = uniprox.id 
         JOIN regiao ON uniuser.regiao = regiao.id '. $varWhere .'
         ORDER BY data DESC'; 
         $this->MySQL->getDb()->beginTransaction();
