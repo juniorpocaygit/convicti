@@ -9,9 +9,9 @@ class UsuariosService
 {
     public const TABELA = 'usuarios';
     public const RECURSOS_GET = ['listar'];
-    public const RECURSOS_DELETE = ['deletar'];
+    public const RECURSOS_DELETE = [''];
     public const RECURSOS_POST = ['cadastrar','login'];
-    public const RECURSOS_PUT = ['atualizar', 'atualizarsenha'];
+    public const RECURSOS_PUT = [''];
 
     private array $dados;
     private array $dadosCorpoRequest = [];
@@ -81,11 +81,6 @@ class UsuariosService
     {
         $this->dadosCorpoRequest = $dadosRequest;
     }
-    
-    private function deletar()
-    {
-        return $this->UsuariosRepository->getMySQL()->delete(self::TABELA,$this->dados['id']);
-    }
    
     private function cadastrar()
     {
@@ -134,33 +129,7 @@ class UsuariosService
         }
         throw new \InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_LOGIN_SENHA_OBRIGATORIO);
     }
-
-    private function atualizar()
-    {
-        if ($this->UsuariosRepository->updateUser($this->dados['id'], $this->dadosCorpoRequest) > 0) {
-            $this->UsuariosRepository->getMySQL()->getDb()->commit();
-            return ConstantesGenericasUtil::MSG_ATUALIZADO_SUCESSO;
-        }
-        $this->UsuariosRepository->getMySQL()->getDb()->rollBack();
-        throw new \InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_NAO_AFETADO);
-    }
-    
-    private function atualizarsenha()
-    {
-        if ($this->UsuariosRepository->updatePassword($this->dados['id'], $this->dadosCorpoRequest) > 0) {
-            $this->UsuariosRepository->getMySQL()->getDb()->commit();
-            return ConstantesGenericasUtil::MSG_SENHA_ATUALIZADA_SUCESSO;
-        }
-
-        $this->UsuariosRepository->getMySQL()->getDb()->rollBack();
-        throw new \InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_NAO_AFETADO);
-    }
- 
-    private function getOneByKey()
-    {
-        return $this->UsuariosRepository->getMySQL()->getOneByKey(self::TABELA,$this->dados['id']);
-    }
-    
+      
     private function listar()
     {
         return $this->UsuariosRepository->getMySQL()->getAll(self::TABELA);

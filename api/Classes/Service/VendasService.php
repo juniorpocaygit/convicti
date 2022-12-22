@@ -9,9 +9,9 @@ class VendasService
 {
     public const TABELA = 'vendas';
     public const RECURSOS_GET = ['relatorio'];
-    public const RECURSOS_DELETE = ['deletar'];
+    public const RECURSOS_DELETE = [''];
     public const RECURSOS_POST = ['inserir', 'detalhes','filtrar'];
-    public const RECURSOS_PUT = ['atualizar'];
+    public const RECURSOS_PUT = [''];
 
     private array $dados;
     private array $dadosCorpoRequest = [];
@@ -29,7 +29,7 @@ class VendasService
         $retorno = null;
         $recurso = $this->dados['recurso'];
         if (in_array($recurso, self::RECURSOS_GET)) {
-           $retorno = $this->dados['id'] > 0 ? $this->listaPorCargo() : $this->$recurso();
+           $retorno = $this->dados['id'] > 0 ? $this->listaPorCargo() : $this->relatorio();
         } else {
             throw new \InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);
         }
@@ -80,12 +80,7 @@ class VendasService
     {
         $this->dadosCorpoRequest = $dadosRequest;
     }
-    
-    private function deletar()
-    {
-        return $this->VendasRepository->getMySQL()->delete(self::TABELA,$this->dados['id']);
-    }
-   
+      
     private function inserir()
     {
        [$cliente, $produto, $valor, $vendedor, $lat, $lon] = 
@@ -128,27 +123,6 @@ class VendasService
         throw new \InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_LOGIN_SENHA_OBRIGATORIO);
     }
 
-    private function atualizar()
-    {
-        if ($this->VendasRepository->updateUser($this->dados['id'], $this->dadosCorpoRequest) > 0) {
-            $this->VendasRepository->getMySQL()->getDb()->commit();
-            return ConstantesGenericasUtil::MSG_ATUALIZADO_SUCESSO;
-        }
-        $this->VendasRepository->getMySQL()->getDb()->rollBack();
-        throw new \InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_NAO_AFETADO);
-    }
-    
-    private function atualizarsenha()
-    {
-        if ($this->VendasRepository->updatePassword($this->dados['id'], $this->dadosCorpoRequest) > 0) {
-            $this->VendasRepository->getMySQL()->getDb()->commit();
-            return ConstantesGenericasUtil::MSG_SENHA_ATUALIZADA_SUCESSO;
-        }
-
-        $this->VendasRepository->getMySQL()->getDb()->rollBack();
-        throw new \InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_NAO_AFETADO);
-    }
- 
     private function listaPorCargo()
     {
         if ($this->VendasRepository->listaPorCargo($this->dados['id'])) {
@@ -177,10 +151,7 @@ class VendasService
     
     private function detalhes()
     {
-       [$venda] = 
-       [
-            $this->dadosCorpoRequest['venda']
-       ];
+       [$venda] = [$this->dadosCorpoRequest['venda']];
        if ($venda) {
             if ($this->VendasRepository->detalhes($venda)) {
                 return $this->VendasRepository->detalhes($venda);
@@ -190,6 +161,11 @@ class VendasService
         throw new \InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_VENDA_DETALHE);
     }
   
+    private function relatorio()
+   {
+       return $this->VendasRepository->somaVendas();
+   }
+
     private function validarRetornoRequest($retorno): void
     {
         if ($retorno == null) {

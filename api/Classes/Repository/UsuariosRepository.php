@@ -54,32 +54,6 @@ class UsuariosRepository
         }
     }
 
-    public function updateUser($id, $dados)
-    {
-        $consultaUpdate = 'UPDATE '. self::TABELA .' SET nome = :nome, whatsapp = :whatsapp WHERE id = :id';
-        $this->MySQL->getDb()->beginTransaction();
-        $stmt = $this->MySQL->getDb()->prepare($consultaUpdate);
-        $stmt->bindParam(':id', $id);
-        $stmt->bindParam(':nome', $dados['nome']);
-        $stmt->bindParam(':whatsapp', $dados['whatsapp']);
-        $stmt->execute();
-        $this->MySQL->getDb()->commit();
-
-        $consultaSelect = 'SELECT * FROM '. self::TABELA .' WHERE id = :id';
-        $this->MySQL->getDb()->beginTransaction();
-        $stmt = $this->MySQL->getDb()->prepare($consultaSelect);
-        $stmt->bindParam(':id', $id);
-        $stmt->execute();
-        $output['data'] = $stmt->fetch();
-     
-        session_start();
-        $_SESSION["id"] = $output["data"]["id"];
-        $_SESSION["email"] = $output["data"]["email"];
-        $_SESSION["usuario"] = $output["data"]["nome"]; 
-        $_SESSION["whats"] = $output["data"]["whatsapp"]; 
-        return $output;
-    }
-       
     public function getMySQL()
     {
         return $this->MySQL;

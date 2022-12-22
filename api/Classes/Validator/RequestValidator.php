@@ -27,7 +27,6 @@ class RequestValidator
 
     public function processarRequest()
     {
-     
         $retorno = utf8_encode(ConstantesGenericasUtil::MSG_ERRO_TIPO_ROTA);
 
         $this->request['metodo'] == 'GET';
@@ -36,7 +35,6 @@ class RequestValidator
         }
 
         return $retorno;
-
     }
 
     private function direcionarRequest()
